@@ -1,1 +1,0 @@
-Class: FilesystemStream, Path: filepattern/src/filepattern/cpp/util/fs_stream.hpp, Start Line: 31, End Line: 182
