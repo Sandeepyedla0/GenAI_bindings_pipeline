@@ -20,24 +20,22 @@ def extract_class_content(file_path, target_class_name, line_number):
 
         if opening_braces > 0 and opening_braces == closing_braces:
             break
-    write_to_file(class_content)
     return class_content
 
-def write_to_file(content):
-    with open("output_class.cpp", 'w') as output_file:
-        output_file.write(content)
+
 
 def extract_class_main(proj_dir,output_dest):
 
     valid_extensions = ['.cpp', '.cxx', '.cc', '.C', '.c++', '.h', '.hh', '.h++', '.hxx', '.hpp', '.H']
 
     file_paths = {}
-    # with open(output_dest, 'w') as output_file:
-    #     file_paths = clang_parser.parse_cpp_files(proj_dir, valid_extensions, output_file, file_paths)
-    file_paths = {'FilesystemStream': {'path': 'filepattern/src/filepattern/cpp/util/fs_stream.hpp', 'class_start_line': 31, 'class_end_line': 182}, 
-    'FilePattern': {'path': 'filepattern/src/filepattern/cpp/include/filepattern.h', 'class_start_line': 36, 'class_end_line': 108}, 
-    'ExternalMergeSort': {'path': 'filepattern/src/filepattern/cpp/util/sort.hpp', 'class_start_line': 37, 'class_end_line': 152}}
-    print(file_paths)
+    with open(output_dest, 'w') as output_file:
+        file_paths = clang_parser.parse_cpp_files(proj_dir, valid_extensions, output_file, file_paths)
+    
+    # file_paths = {'FilesystemStream': {'path': 'filepattern/src/filepattern/cpp/util/fs_stream.hpp', 'class_start_line': 31, 'class_end_line': 182}, 
+    # 'FilePattern': {'path': 'filepattern/src/filepattern/cpp/include/filepattern.h', 'class_start_line': 36, 'class_end_line': 108}, 
+    # 'ExternalMergeSort': {'path': 'filepattern/src/filepattern/cpp/util/sort.hpp', 'class_start_line': 37, 'class_end_line': 152}}
+    #print(file_paths)
     
     # # Display options to the user
     print("Available classes:")
@@ -62,4 +60,4 @@ def extract_class_main(proj_dir,output_dest):
 
 
     class_def = extract_class_content(file_paths[selected_class]['path'], selected_class, file_paths[selected_class]['class_start_line'])
-    return class_def
+    return class_def,selected_class
