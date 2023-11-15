@@ -130,7 +130,6 @@ if __name__ == '__main__':
     model_path = "Phind/Phind-CodeLlama-34B-v2"
     model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_path, padding_side='left')
-
     together.api_key = "e03a7067bb512668df6dc48cffc1da1b04ff24b3639222546cffec115fd1e2fb"
 
     # see available models
