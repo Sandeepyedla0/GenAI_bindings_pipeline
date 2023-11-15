@@ -12,7 +12,7 @@ import together
 
 def together_api(input_promt):
 
-    together.api_key = "e03a7067bb512668df6dc48cffc1da1b04ff24b3639222546cffec115fd1e2fb"
+    together.api_key = "63013346980acdb9336bc6cbe95d99467fa0e7666386aee1bbd10551b11b5e9a"
 
     code_llm_dict = {
     1: 'Phind/Phind-CodeLlama-34B-v2',
