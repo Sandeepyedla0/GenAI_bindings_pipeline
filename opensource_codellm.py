@@ -11,6 +11,9 @@ import together
 
 
 def together_api(input_promt):
+
+    together.api_key = "e03a7067bb512668df6dc48cffc1da1b04ff24b3639222546cffec115fd1e2fb"
+
     code_llm_dict = {
     1: 'Phind/Phind-CodeLlama-34B-v2',
     2: 'Phind/Phind-CodeLlama-34B-Python-v1',
@@ -63,7 +66,7 @@ def together_api(input_promt):
     return generated_code, execution_time
 
 
-def phind_LLM(model_path, prompt_template):
+def phind_LLM(model_path, prompt_template,model):
 
     tokenizer = AutoTokenizer.from_pretrained(model_path, padding_side='left')
     start_time =time.time()
@@ -82,18 +85,17 @@ def phind_LLM(model_path, prompt_template):
     generated_code = generated_code.replace(prompt_template, "").split("\n\n\n")[0]
 
     end_time = time.time()
-    execution_time - end_time -start_time
+    execution_time = end_time -start_time
     print(generated_code)
     return generated_code, execution_time
 
-def promt_generation():
+def promt_generation(class_definition):
     # PolyCoder_Data_Collection/Code-LMs/Data/code_generation_script/axle_projects/filepattern/src/filepattern/cpp/include/filepattern.h
-    # instruction = " Generate C++ bindings ('.cpp' file) with the Pybind11 module for a C++ class and provide only the output code without any explanation for :"
-    instruction = """ Complete the cmake file library name is 'backend' and target_compile_definitions
-    file_path = 'src/filepattern/cpp/bindings.cpp' :
-    if(BUILD_PYTHON_LIB)
-        find_package(pybind11 CONFIG REQUIRED) """
-
+    
+    instruction = " Generate C++ bindings ('.cpp' file) with the Pybind11 module for a C++ class and provide only the output code without any explanation for :"
+    prompt_template = f"{instruction}\n\n{class_definition}"    # instruction = """ Complete the cmake file library name is 'backend' and target_compile_definitions
+    
+    ''' For multiple paths
     # Initialize a dictionary to store file contents with filenames as keys
     file_contents = {}
 
@@ -108,10 +110,11 @@ def promt_generation():
 
     # Read the file content into a variable
     with open(normalized_path, 'r', encoding="utf-8") as source_file:
-        file_contents[f'file_{i + 1}'] = source_file.read()
+        file_contents[f'file_{i + 1}'] = source_file.read()'''
 
     # Create a prompt_template with the instruction and file contents
-    prompt_template = instruction
+    # prompt_template = instruction
+
     # for key in file_contents:
     #     prompt_template += f" {file_contents[key]}"
 
@@ -120,54 +123,25 @@ def promt_generation():
     llm_promt = f'''{prompt_template}'''
     return llm_promt
 
-def write_data(generated_binding,save_path):
-    # Write the content to the .cpp file
-    with open(save_path, 'w', encoding='utf-8') as cpp_file:
-        cpp_file.write(generated_binding)
-
-if __name__ == '__main__':
-
+def init_axle_models():
     model_path = "Phind/Phind-CodeLlama-34B-v2"
     model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto")
-    tokenizer = AutoTokenizer.from_pretrained(model_path, padding_side='left')
-    together.api_key = "e03a7067bb512668df6dc48cffc1da1b04ff24b3639222546cffec115fd1e2fb"
-
-    # see available models
-    model_list = together.Models.list()
-
+    return model
+def axle_opensource_llms():
+    pass
+    # init_axle_models()
+    
+    """ See available models
+    # model_list = together.Models.list()
     # print(f"{len(model_list)} models available")
-
-    # print the first 10 models on the menu
-    model_names = [model_dict['name'] for model_dict in model_list]
-    model_names
-
-
-    print("Select an option:")
-    print("1. Generate code from SCB NCAT LLM server (Internal server)")
-    print("2. Generate code from together.ai API")
-
-    # Get user input
-    user_choice = input("Enter the number of your choice: ")
-    generated_promt = promt_generation()
-    # print(generated_promt)
-    # save_path = 'bindings.cpp'
-    save_path = 'cmake.txt'
+    # # print the first 10 models on the menu
+    # model_names = [model_dict['name'] for model_dict in model_list]
+    # print(model_names) """
 
 
-    if user_choice == '1':
-        print("Selected : SCB NCAT LLM server")
-        generated_binding,execution_time = phind_LLM(model_path, generated_promt)
+    
 
-    elif user_choice == '2':
-        # Option 2: Code generation from together.ai API
-        print("Code generation from together.ai API")
-        generated_binding, execution_time = together_api(generated_promt)
-
-    else:
-        print("Invalid option. Please select a valid option (1 or 2).")
-    write_data (generated_binding,save_path)
-
-    print(f" Model code generation time: {execution_time}")
+    
 
 
 

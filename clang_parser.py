@@ -52,9 +52,9 @@ def traverse(node, output_file, processed_classes, file_paths):
             start_line = node.location.line 
             end_line = node.extent.end.line  # Get the end line number of the class declaration
             file_paths[class_name] = {
-                'Path': file_path,
-                'Start Line': start_line,
-                'End Line': end_line
+                'path': file_path,
+                'class_start_line': start_line,
+                'class_end_line': end_line
             }  # Store class name, file path, start line number, and end line number in the dictionary
             output_line = f"Class: {class_name}, Path: {file_path}, Start Line: {start_line}, End Line: {end_line}\n" 
             output_file.write(output_line)
