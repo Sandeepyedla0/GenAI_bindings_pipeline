@@ -1,5 +1,5 @@
 
-Here is the generated C++ bindings using Pybind11:
+Here is the generated C++ binding using Pybind11:
 
 ```cpp
 #include <pybind11/pybind11.h>
