@@ -35,12 +35,12 @@ def together_api(input_promt):
         print(f"{key}: {value}")
 
     # Get user input
-    selected_option = int(input("Select an option  "))
-
+    # selected_option = int(input("Select an option  "))
+    selected_option = 1
     # Check if the selected option is valid
     if selected_option in code_llm_dict:
         selected_LLM_model = code_llm_dict[selected_option]
-        print(f"You selected: {selected_LLM_model}")
+        print(f"Selected Model: {selected_LLM_model}")
     else:
         print("Invalid option. Please select a valid option.")
 
@@ -127,24 +127,4 @@ def init_axle_models():
     model_path = "Phind/Phind-CodeLlama-34B-v2"
     model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto")
     return model
-def axle_opensource_llms():
-    pass
-    # init_axle_models()
-    
-    """ See available models
-    # model_list = together.Models.list()
-    # print(f"{len(model_list)} models available")
-    # # print the first 10 models on the menu
-    # model_names = [model_dict['name'] for model_dict in model_list]
-    # print(model_names) """
-
-
-    
-
-    
-
-
-
-
-
     

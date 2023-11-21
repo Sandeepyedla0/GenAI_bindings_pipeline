@@ -2,6 +2,7 @@ import os
 import extract_class
 import clang_parser
 import opensource_codellm
+import argparse
 
 class CodeGenerator:
     def __init__(self, proj_dir, output_dir):
@@ -23,11 +24,11 @@ class CodeGenerator:
 
     def generate_binding(self, user_choice, class_definition):
         generated_promt = opensource_codellm.promt_generation(class_definition)
-        if user_choice == '1':
+        if user_choice == 1:
             print("Selected : SCB NCAT LLM server")
             model = opensource_codellm.init_axle_models()
             return opensource_codellm.phind_LLM("Phind/Phind-CodeLlama-34B-v2", generated_promt, model)
-        elif user_choice == '2':
+        elif user_choice == 2:
             print("Code generation from together.ai API")
             return opensource_codellm.together_api(generated_promt)
         else:
@@ -46,14 +47,22 @@ class CodeGenerator:
         print("Select an option:")
         print("1. Generate code from SCB NCAT LLM server (Internal server)")
         print("2. Generate code from together.ai API")
-        user_choice = input("Enter the number of your choice: ")
+        
+        #user_choice = int(input("Enter the number of your choice: "))
+        # generated_binding, execution_time = self.generate_binding(user_choice, class_definition)
+        user_choice = 1
 
+        print("By default - Chosing together.ai API server")
         generated_binding, execution_time = self.generate_binding(user_choice, class_definition)
         if generated_binding and execution_time:
             print(f" Model code generation time: {execution_time}")
             self.write_data(generated_binding, os.path.join(new_dir, f"GenAi_{selected_class}_binding.cpp"))
 
 if __name__ == "__main__":
-    proj_dir = 'external_proj/simdjson'
-    generator = CodeGenerator(proj_dir, "output_folder")
+    parser = argparse.ArgumentParser(description='Generate bindings.')
+    parser.add_argument('--proj_dir', type=str, required=True, help='Project directory')
+    parser.add_argument('--output_dir', type=str, required=True, help='Output directory')
+    #parser.add_argument('--class_name', type=str, required=True, help='Output directory')
+    args = parser.parse_args()
+    generator = CodeGenerator(args.proj_dir, args.output_dir)
     generator.run()

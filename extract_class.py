@@ -44,8 +44,8 @@ def extract_class_main(proj_dir,output_dest):
     
     while True:
         # Get user input for class selection
-        user_input = input("Enter the number corresponding to the class you want to select: ")
-
+        # user_input = input("Enter the number corresponding to the class you want to select: ")
+        user_input = 1
         try:
             selected_index = int(user_input)
             if 1 <= selected_index <= len(file_paths):
@@ -57,7 +57,7 @@ def extract_class_main(proj_dir,output_dest):
                 print("Invalid input. Please enter a valid number.")
         except ValueError:
             print("Invalid input. Please enter a valid number.")
-
+    #class_def = extract_class_content(file_paths[selected_class]['path'], selected_class, file_paths[selected_class]['class_start_line'])
 
     class_def = extract_class_content(file_paths[selected_class]['path'], selected_class, file_paths[selected_class]['class_start_line'])
     return class_def,selected_class
