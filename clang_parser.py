@@ -46,7 +46,7 @@ def traverse(node, output_file, processed_classes, file_paths):
     if node.kind == clang.cindex.CursorKind.CLASS_DECL and is_pybind11_usable_class(node):
         class_name = node.spelling
         if class_name not in processed_classes:
-            print(class_name)
+            # print(class_name)
             processed_classes.add(class_name)
             file_path = node.location.file.name
             start_line = node.location.line 

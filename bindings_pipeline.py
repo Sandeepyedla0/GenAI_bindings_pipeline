@@ -54,6 +54,6 @@ class CodeGenerator:
             self.write_data(generated_binding, os.path.join(new_dir, f"GenAi_{selected_class}_binding.cpp"))
 
 if __name__ == "__main__":
-    proj_dir = 'nyxus'
+    proj_dir = 'external_proj/simdjson'
     generator = CodeGenerator(proj_dir, "output_folder")
     generator.run()
