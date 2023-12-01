@@ -1,5 +1,4 @@
-from transformers import AutoTokenizer, LlamaForCausalLM
-#from human_eval.data import write_jsonl, read_problems
+from transformers import AutoTokenizer, LlamaForCausalLM, AutoModelForCausalLM
 import tqdm
 import time
 from pathlib import Path
@@ -12,7 +11,7 @@ import together
 
 def together_api(input_promt):
 
-    together.api_key = "63013346980acdb9336bc6cbe95d99467fa0e7666386aee1bbd10551b11b5e9a"
+    together.api_key = "913d47bacb74366c9311bcd60f3636179a1f75b620592c8e5fdf001bee79dbf1"
 
     code_llm_dict = {
     1: 'Phind/Phind-CodeLlama-34B-v2',
@@ -35,8 +34,8 @@ def together_api(input_promt):
         print(f"{key}: {value}")
 
     # Get user input
-    # selected_option = int(input("Select an option  "))
-    selected_option = 1
+    selected_option = int(input("Select an option  "))
+    # selected_option = 1
     # Check if the selected option is valid
     if selected_option in code_llm_dict:
         selected_LLM_model = code_llm_dict[selected_option]
@@ -66,7 +65,7 @@ def together_api(input_promt):
     return generated_code, execution_time
 
 
-def phind_LLM(model_path, prompt_template,model):
+def phind_LLM(model_path, prompt_template, model):
 
     tokenizer = AutoTokenizer.from_pretrained(model_path, padding_side='left')
     start_time =time.time()
@@ -77,7 +76,7 @@ def phind_LLM(model_path, prompt_template,model):
     attention_mask = inputs.attention_mask
 
     # output generation
-    print("Phind-CodeLlama-34B-v2 generation in process")
+    print(f"{model_path} generation in process")
     generate_ids = model.generate(input_ids, attention_mask=attention_mask, max_new_tokens=1024, do_sample=False, top_p=0.75, top_k=60, temperature=0.1)
 
     # Decoding output
@@ -123,8 +122,13 @@ def promt_generation(class_definition):
     llm_promt = f'''{prompt_template}'''
     return llm_promt
 
-def init_axle_models():
+def internal_models():
     model_path = "Phind/Phind-CodeLlama-34B-v2"
     model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto")
     return model
-    
+
+def load_model_checkpoints():
+    phindllm = LlamaForCausalLM.from_pretrained("Phind/Phind-CodeLlama-34B-v2", device_map="auto")
+    wizardllm = AutoModelForCausalLM.from_pretrained("WizardLM/WizardCoder-Python-34B-V1.0")
+    wizardllm = 0
+    return phindllm, wizardllm

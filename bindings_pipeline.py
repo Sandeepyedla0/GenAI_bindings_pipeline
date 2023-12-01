@@ -26,8 +26,28 @@ class CodeGenerator:
         generated_promt = opensource_codellm.promt_generation(class_definition)
         if user_choice == 1:
             print("Selected : SCB NCAT LLM server")
-            model = opensource_codellm.init_axle_models()
-            return opensource_codellm.phind_LLM("Phind/Phind-CodeLlama-34B-v2", generated_promt, model)
+            axle_llms = { 1: 'Phind/Phind-CodeLlama-34B-v2',
+                          2: 'WizardLM/WizardCoder-Python-34B-V1.0',
+                          3: 'CodeLlama-34b'}
+            # Provide user options to select
+            print("Available options:")
+            for key, value in axle_llms.items():
+                print(f"{key}: {value}")
+
+            # Get user input
+            # selected_option = int(input("Select an option  "))
+            selected_option = 1
+            #  selected option is valid
+            if selected_option in axle_llms:
+                selected_LLM_model = axle_llms[selected_option]
+                print(f"Selected Model: {selected_LLM_model}")
+            else:
+                print("Invalid option. Please select a valid option.")
+            if  selected_option == 1:
+                model = phindllm
+            elif selected_option == 2:
+                model = wizardllm
+            return opensource_codellm.phind_LLM(selected_LLM_model, generated_promt, model)
         elif user_choice == 2:
             print("Code generation from together.ai API")
             return opensource_codellm.together_api(generated_promt)
@@ -36,6 +56,8 @@ class CodeGenerator:
             return None, None
 
     def run(self):
+        if not os.path.exists(self.proj_dir.split('/')[-1]):
+            os.makedirs(self.proj_dir.split('/')[-1])
         new_dir = os.path.join(self.output_dir, self.proj_dir.split('/')[-1])
         if not os.path.exists(new_dir):
             os.makedirs(new_dir)
@@ -48,21 +70,28 @@ class CodeGenerator:
         print("1. Generate code from SCB NCAT LLM server (Internal server)")
         print("2. Generate code from together.ai API")
         
-        #user_choice = int(input("Enter the number of your choice: "))
-        # generated_binding, execution_time = self.generate_binding(user_choice, class_definition)
-        user_choice = 1
+        user_choice = int(input("Enter the number of your choice: "))
 
-        print("By default - Chosing together.ai API server")
+        # user_choice = 2
+
+        # print("By default - Chosing together.ai API server")
         generated_binding, execution_time = self.generate_binding(user_choice, class_definition)
         if generated_binding and execution_time:
             print(f" Model code generation time: {execution_time}")
             self.write_data(generated_binding, os.path.join(new_dir, f"GenAi_{selected_class}_binding.cpp"))
 
 if __name__ == "__main__":
+    phindllm, wizardllm = opensource_codellm.load_model_checkpoints()
+    print(" Project parsing in process ")
     parser = argparse.ArgumentParser(description='Generate bindings.')
     parser.add_argument('--proj_dir', type=str, required=True, help='Project directory')
     parser.add_argument('--output_dir', type=str, required=True, help='Output directory')
-    #parser.add_argument('--class_name', type=str, required=True, help='Output directory')
+    # #parser.add_argument('--class_name', type=str, required=True, help='Output directory')
     args = parser.parse_args()
     generator = CodeGenerator(args.proj_dir, args.output_dir)
     generator.run()
+
+    # proj_dir = "filepattern"
+    # output_dir = 'output_dir'
+    # generator = CodeGenerator(proj_dir, output_dir)
+    # generator.run()
