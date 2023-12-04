@@ -114,7 +114,7 @@ def cmake_promt_generation(gen_code):
     # prompt_template = f"{instruction1}\n\n{gen_code}"
 
     llm_promt = f'''{prompt_template}'''
-    print(llm_promt)
+    # print(llm_promt)
     return llm_promt
 
 def promt_generation(class_definition):

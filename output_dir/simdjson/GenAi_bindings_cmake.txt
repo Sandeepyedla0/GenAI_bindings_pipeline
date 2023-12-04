@@ -1,0 +1,28 @@
+Installation
+    install(TARGETS backend DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(FILES "${PROJECT_SOURCE_DIR}/requirements.txt" DESTINATION ${CMAKE_INSTALL_PREFIX})Here is a CMakeLists.txt file that corresponds to your requirements:
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(project_name)
+
+# Set the policy for CMP0148
+cmake_policy(SET CMP0148 OLD)
+
+# Find Python and pybind11
+find_package(PythonInterp REQUIRED)
+find_package(PythonLibs REQUIRED)
+find_package(pybind11 REQUIRED)
+
+# Create the module
+pybind11_add_module(padded_string_view_module src/path/bindings_name.cpp)
+
+# Link against the library
+target_link_libraries(padded_string_view_module PRIVATE project_name::project_name)
+
+# Install the module
+install(TARGETS padded_string_view_module DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES "${PROJECT_SOURCE_DIR}/requirements.txt" DESTINATION ${CMAKE_INSTALL_PREFIX})
+```
+
+This CMakeLists.txt will create a Python module named `padded_string_view_module`, link it against the `project_name` library, and install both the module and a `requirements.txt` file in the specified installation prefix.
