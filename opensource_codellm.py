@@ -1,5 +1,4 @@
-from transformers import AutoTokenizer, LlamaForCausalLM
-#from human_eval.data import write_jsonl, read_problems
+from transformers import AutoTokenizer, LlamaForCausalLM, AutoModelForCausalLM
 import tqdm
 import time
 from pathlib import Path
@@ -12,7 +11,7 @@ import together
 
 def together_api(input_promt):
 
-    together.api_key = "63013346980acdb9336bc6cbe95d99467fa0e7666386aee1bbd10551b11b5e9a"
+    together.api_key = "913d47bacb74366c9311bcd60f3636179a1f75b620592c8e5fdf001bee79dbf1"
 
     code_llm_dict = {
     1: 'Phind/Phind-CodeLlama-34B-v2',
@@ -36,11 +35,11 @@ def together_api(input_promt):
 
     # Get user input
     selected_option = int(input("Select an option  "))
-
+    # selected_option = 1
     # Check if the selected option is valid
     if selected_option in code_llm_dict:
         selected_LLM_model = code_llm_dict[selected_option]
-        print(f"You selected: {selected_LLM_model}")
+        print(f"Selected Model: {selected_LLM_model}")
     else:
         print("Invalid option. Please select a valid option.")
 
@@ -63,10 +62,12 @@ def together_api(input_promt):
     # print generated text
     # print(output['prompt'][0]+output['output']['choices'][0]['text'])
     # print(output['output']['choices'][0]['text'])
+
+
     return generated_code, execution_time
 
 
-def phind_LLM(model_path, prompt_template,model):
+def phind_LLM(model_path, prompt_template, model):
 
     tokenizer = AutoTokenizer.from_pretrained(model_path, padding_side='left')
     start_time =time.time()
@@ -77,7 +78,7 @@ def phind_LLM(model_path, prompt_template,model):
     attention_mask = inputs.attention_mask
 
     # output generation
-    print("Phind-CodeLlama-34B-v2 generation in process")
+    print(f"{model_path} generation in process")
     generate_ids = model.generate(input_ids, attention_mask=attention_mask, max_new_tokens=1024, do_sample=False, top_p=0.75, top_k=60, temperature=0.1)
 
     # Decoding output
@@ -86,13 +87,40 @@ def phind_LLM(model_path, prompt_template,model):
 
     end_time = time.time()
     execution_time = end_time -start_time
-    print(generated_code)
+    #print(generated_code)
+
     return generated_code, execution_time
+
+def cmake_promt_generation(gen_code):
+    instruction1 = "Consider python bindings code:"
+    instruction2 = ''' Generate me somthing like above mentioned Cmake script lines for CMakeLists.txt with project_name = project_name
+    and one of the sample  CMake script lines are
+    # Set the policy for CMP0148
+    cmake_policy(SET CMP0148 OLD)
+    # Find Python and pybind11
+    find_package(PythonInterp REQUIRED)
+    find_package(PythonLibs REQUIRED)
+    find_package(pybind11 REQUIRED)
+    find_package(project_name QUIET)
+    pybind11_add_module(backend 
+        src/path/bindings_name.cpp
+    )
+    target_link_libraries("--pick from binding code--" PRIVATE project_name::project_name)
+    
+    # '''
+    # instruction1 = "Generate Cmake script lines for CMakeLists.txt from binding code: "
+
+    prompt_template = f"{instruction1}\n\n{gen_code}\n\n{instruction2}"
+    # prompt_template = f"{instruction1}\n\n{gen_code}"
+
+    llm_promt = f'''{prompt_template}'''
+    # print(llm_promt)
+    return llm_promt
 
 def promt_generation(class_definition):
     # PolyCoder_Data_Collection/Code-LMs/Data/code_generation_script/axle_projects/filepattern/src/filepattern/cpp/include/filepattern.h
     
-    instruction = " Generate C++ bindings ('.cpp' file) with the Pybind11 module for a C++ class and provide only the output code without any explanation for :"
+    instruction = " Generate C++ bindings ('.cpp' file) with the Pybind11 module for a C++ class and provide only the CPP output code. I do not require additional information apart from cpp content"
     prompt_template = f"{instruction}\n\n{class_definition}"    # instruction = """ Complete the cmake file library name is 'backend' and target_compile_definitions
     
     ''' For multiple paths
@@ -123,28 +151,14 @@ def promt_generation(class_definition):
     llm_promt = f'''{prompt_template}'''
     return llm_promt
 
-def init_axle_models():
+def internal_models():
     model_path = "Phind/Phind-CodeLlama-34B-v2"
     model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto")
     return model
-def axle_opensource_llms():
-    pass
-    # init_axle_models()
-    
-    """ See available models
-    # model_list = together.Models.list()
-    # print(f"{len(model_list)} models available")
-    # # print the first 10 models on the menu
-    # model_names = [model_dict['name'] for model_dict in model_list]
-    # print(model_names) """
 
-
-    
-
-    
-
-
-
-
-
-    
+def load_model_checkpoints():
+    #phindllm = LlamaForCausalLM.from_pretrained("Phind/Phind-CodeLlama-34B-v2", device_map="auto")
+    #wizardllm = AutoModelForCausalLM.from_pretrained("WizardLM/WizardCoder-Python-34B-V1.0")
+    phindllm = 0
+    wizardllm = 0
+    return phindllm, wizardllm
