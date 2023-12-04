@@ -62,6 +62,8 @@ def together_api(input_promt):
     # print generated text
     # print(output['prompt'][0]+output['output']['choices'][0]['text'])
     # print(output['output']['choices'][0]['text'])
+
+
     return generated_code, execution_time
 
 
@@ -85,13 +87,40 @@ def phind_LLM(model_path, prompt_template, model):
 
     end_time = time.time()
     execution_time = end_time -start_time
-    print(generated_code)
+    #print(generated_code)
+
     return generated_code, execution_time
+
+def cmake_promt_generation(gen_code):
+    instruction1 = "Consider python bindings code:"
+    instruction2 = ''' Generate me somthing like above mentioned Cmake script lines for CMakeLists.txt with project_name = project_name
+    and one of the sample  CMake script lines are
+    # Set the policy for CMP0148
+    cmake_policy(SET CMP0148 OLD)
+    # Find Python and pybind11
+    find_package(PythonInterp REQUIRED)
+    find_package(PythonLibs REQUIRED)
+    find_package(pybind11 REQUIRED)
+    find_package(project_name QUIET)
+    pybind11_add_module(backend 
+        src/path/bindings_name.cpp
+    )
+    target_link_libraries("--pick from binding code--" PRIVATE project_name::project_name)
+    
+    # '''
+    # instruction1 = "Generate Cmake script lines for CMakeLists.txt from binding code: "
+
+    prompt_template = f"{instruction1}\n\n{gen_code}\n\n{instruction2}"
+    # prompt_template = f"{instruction1}\n\n{gen_code}"
+
+    llm_promt = f'''{prompt_template}'''
+    print(llm_promt)
+    return llm_promt
 
 def promt_generation(class_definition):
     # PolyCoder_Data_Collection/Code-LMs/Data/code_generation_script/axle_projects/filepattern/src/filepattern/cpp/include/filepattern.h
     
-    instruction = " Generate C++ bindings ('.cpp' file) with the Pybind11 module for a C++ class and provide only the output code without any explanation for :"
+    instruction = " Generate C++ bindings ('.cpp' file) with the Pybind11 module for a C++ class and provide only the CPP output code. I do not require additional information apart from cpp content"
     prompt_template = f"{instruction}\n\n{class_definition}"    # instruction = """ Complete the cmake file library name is 'backend' and target_compile_definitions
     
     ''' For multiple paths
@@ -128,7 +157,8 @@ def internal_models():
     return model
 
 def load_model_checkpoints():
-    phindllm = LlamaForCausalLM.from_pretrained("Phind/Phind-CodeLlama-34B-v2", device_map="auto")
-    wizardllm = AutoModelForCausalLM.from_pretrained("WizardLM/WizardCoder-Python-34B-V1.0")
+    #phindllm = LlamaForCausalLM.from_pretrained("Phind/Phind-CodeLlama-34B-v2", device_map="auto")
+    #wizardllm = AutoModelForCausalLM.from_pretrained("WizardLM/WizardCoder-Python-34B-V1.0")
+    phindllm = 0
     wizardllm = 0
     return phindllm, wizardllm

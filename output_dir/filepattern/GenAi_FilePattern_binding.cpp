@@ -1,16 +1,16 @@
 
-Here is the C++ bindings code for the FilePattern class using Pybind11:
+Here is the CPP output code using Pybind11 to generate Python bindings for the given C++ class "FilePattern":
 
 ```cpp
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/stl.h> // needed for automatic conversion of STL containers
 #include "FilePattern.h"
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(FilePattern, m) {
+PYBIND11_MODULE(filepattern, m) {
     py::class_<FilePattern>(m, "FilePattern")
-        .def(py::init<const std::string&, const std::string&, const std::string&, bool, bool>())
+        .def(py::init<const std::string &, const std::string &, const std::string &, bool, bool>())
         .def("getMatchingByMap", &FilePattern::getMatchingByMap)
         .def("getFiles", &FilePattern::getFiles)
         .def("getMatching", &FilePattern::getMatching)
@@ -29,6 +29,7 @@ PYBIND11_MODULE(FilePattern, m) {
         .def("getNewNaming", &FilePattern::getNewNaming)
         .def("getSlice", &FilePattern::getSlice)
         .def("getSliceByIdx", &FilePattern::getSliceByIdx)
+        .def("inferPattern", &FilePattern::inferPattern)
         .def("getMatchingBlock", &FilePattern::getMatchingBlock)
         .def("getItem", &FilePattern::getItem)
         .def("getItemList", &FilePattern::getItemList)
@@ -45,4 +46,4 @@ PYBIND11_MODULE(FilePattern, m) {
 }
 ```
 
-This code creates Python bindings for the FilePattern class using Pybind11. It exposes all the public member functions of the FilePattern class to Python. Note that you need to include the appropriate headers and link against the Pybind11 library when compiling this code.
+This code creates a Python module named 'filepattern', and it exposes the 'FilePattern' class with all its methods to Python. The methods are exposed in such a way that they can be called directly from Python. Note that you need to include the necessary headers and link against the Pybind11 library when compiling this code.

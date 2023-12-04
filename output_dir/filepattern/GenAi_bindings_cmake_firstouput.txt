@@ -1,0 +1,15 @@
+
+
+To create a CMakeLists.txt file for this project, you can use the following lines:
+
+```cmake
+cmake_minimum_required(VERSION 3.0)
+project(filepattern)
+
+find_package(pybind11 REQUIRED)
+pybind11_add_module(filepattern filepattern.cpp)
+
+target_link_libraries(filepattern PRIVATE pybind11::embed)
+```
+
+This CMakeLists.txt file sets up a minimal CMake project for your pybind11 module. It searches for the Pybind11 package (which needs to be installed on your system), adds your module as a target, and links it against the Pybind11 library.

@@ -1,0 +1,28 @@
+
+Here's a CMakeLists.txt example:
+
+```cmake
+cmake_minimum_required(VERSION 3.14)
+project(YourProjectName)
+
+set(CMAKE_CXX_STANDARD 17)
+
+# Set the policy for CMP0148
+cmake_policy(SET CMP0148 OLD)
+
+# Find Python and pybind11
+find_package(PythonInterp REQUIRED)
+find_package(PythonLibs REQUIRED)
+find_package(pybind11 REQUIRED)
+
+# Find your project (replace 'YourProjectName' with your actual project name)
+find_package(YourProjectName QUIET)
+
+# Create the Python module
+pybind11_add_module(backend 
+    src/path/to/your/bindings_code.cpp
+)
+
+# Link your project to the Python module
+target_link_libraries(backend PRIVATE YourProjectName::YourProjectName)
+```

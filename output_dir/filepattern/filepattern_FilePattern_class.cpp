@@ -1,14 +1,25 @@
 class FILEPATTERN_EXPORT FilePattern {
+
     public:
+
         FilePattern(const std::string& path, const std::string& filePattern="", const std::string& block_size="", bool recursive=false, bool suppressWarnings=false);
+
         ~FilePattern();
+
         std::vector<Tuple> getMatchingByMap (Map& variables);
+
         std::vector<Tuple> getFiles();
+
         std::vector<Tuple> getMatching(const std::vector<std::tuple<std::string, std::vector<Types>>>& variables);
+
         std::map<std::string, std::map<Types, int>> getOccurrences(const std::vector<std::tuple<std::string, std::vector<Types>>>& mapping);
+
         std::map<std::string, std::map<Types, int>> getOccurrencesByMap(Map& mapping);
+
         std::map<std::string, std::set<Types>> getUniqueValues(const std::vector<std::string>& mapping);
+
         std::string outputName(std::vector<Tuple>& vec);
+
         std::vector<std::string> getVariables();
 
         std::vector<std::pair<std::vector<std::pair<std::string, Types>> , std::vector<Tuple>>> groupBy(std::vector<std::string>& groups);

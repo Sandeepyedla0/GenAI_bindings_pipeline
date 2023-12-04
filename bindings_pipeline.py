@@ -33,7 +33,6 @@ class CodeGenerator:
             print("Available options:")
             for key, value in axle_llms.items():
                 print(f"{key}: {value}")
-
             # Get user input
             # selected_option = int(input("Select an option  "))
             selected_option = 1
@@ -50,10 +49,14 @@ class CodeGenerator:
             return opensource_codellm.phind_LLM(selected_LLM_model, generated_promt, model)
         elif user_choice == 2:
             print("Code generation from together.ai API")
-            return opensource_codellm.together_api(generated_promt)
+            generated_code, execution_time = opensource_codellm.together_api(generated_promt)
+            ## for cmake
+            cmake_input = opensource_codellm.cmake_promt_generation(generated_code)
+            cmake_generated_content, cmake_gen_time = opensource_codellm.together_api(cmake_input)
+            return generated_code, execution_time, cmake_generated_content, cmake_gen_time
         else:
             print("Invalid option. Please select a valid option (1 or 2).")
-            return None, None
+            return None, None, None
 
     def run(self):
         if not os.path.exists(self.proj_dir.split('/')[-1]):
@@ -64,6 +67,7 @@ class CodeGenerator:
 
         output_dest = self.output_destination(new_dir)
         class_definition, selected_class = extract_class.extract_class_main(self.proj_dir, output_dest)
+
         self.write_data(class_definition, os.path.join(new_dir, f"{self.proj_dir.split('/')[-1]}_{selected_class}_class.cpp"))
 
         print("Select an option:")
@@ -75,19 +79,28 @@ class CodeGenerator:
         # user_choice = 2
 
         # print("By default - Chosing together.ai API server")
-        generated_binding, execution_time = self.generate_binding(user_choice, class_definition)
-        if generated_binding and execution_time:
-            print(f" Model code generation time: {execution_time}")
+        generated_binding, binding_generation_time,cmake_generated_content,cmake_gen_time = self.generate_binding(user_choice, class_definition)
+        
+        print(f" Model bindings code generation time: {binding_generation_time}")
+        print(f" Model cmake generation time: {cmake_gen_time}")
+        
+        if generated_binding and cmake_generated_content:
+            
             self.write_data(generated_binding, os.path.join(new_dir, f"GenAi_{selected_class}_binding.cpp"))
+            self.write_data(cmake_generated_content, os.path.join(new_dir, f"GenAi_bindings_cmake.txt"))
+        else:
+            print("Writing files failed")
 
 if __name__ == "__main__":
     phindllm, wizardllm = opensource_codellm.load_model_checkpoints()
-    print(" Project parsing in process ")
+    
     parser = argparse.ArgumentParser(description='Generate bindings.')
     parser.add_argument('--proj_dir', type=str, required=True, help='Project directory')
     parser.add_argument('--output_dir', type=str, required=True, help='Output directory')
     # #parser.add_argument('--class_name', type=str, required=True, help='Output directory')
     args = parser.parse_args()
+
+    print(" Project parsing in process ")
     generator = CodeGenerator(args.proj_dir, args.output_dir)
     generator.run()
 
